@@ -11,4 +11,4 @@ When the boulder have been selected by the user is possible to sent all the rele
 
 Here are some image that show how the app looks like.
 
-![name-of-you-image](https://github.com/AlessandroAvi/FishBoard-app/blob/main/Img/app.jpg) 
+![name-of-you-image](https://github.com/AlessandroAvi/Moonboard_Android_App/blob/main/Img/app.jpg) 
