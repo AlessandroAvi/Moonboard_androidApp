@@ -9,100 +9,101 @@ public class BluetoothManager : MonoBehaviour
     public void SendBluetooth()
     {
 
-        string to_send;
-        int size_digit1;
-        int size_digit2;
+        string msg_to_send;
+        char[] char_ary = new char[600];
 
-
-        // Send name trought bluetooth
-        to_send = BoulderVar.problemName.PadLeft(47);
-        size_digit1 = BoulderVar.problemName.Length / 10;
-        size_digit2 = BoulderVar.problemName.Length & 10;
-        SerialManagerScript.SendInfo('1' + size_digit1.ToString() + size_digit2.ToString() + to_send);
-        Debug.Log("Name: " + BoulderVar.problemName);
-
-
-        // Send grade through bluetooth
-        to_send = BoulderVar.grade.PadLeft(47);
-        size_digit1 = BoulderVar.grade.Length / 10;
-        size_digit2 = BoulderVar.grade.Length & 10;
-        SerialManagerScript.SendInfo('2' + size_digit1.ToString() + size_digit2.ToString() + to_send);
-        Debug.Log("Grade: " + BoulderVar.grade);
-
-        // Send the number of moves
-        to_send = BoulderVar.nMoves.ToString().PadLeft(49);
-        SerialManagerScript.SendInfo('3' + to_send);
-        Debug.Log("N moves: " + BoulderVar.nMoves.ToString());
-
-        // Send LETTER moves trought bluetooth
-        SerialManagerScript.SendInfo("4");
-        for (int i=0; i<BoulderVar.nMoves; i++){
-            char currentMove = BoulderVar.moves[i][0];
-            SerialManagerScript.SendInfo(currentMove + "");
-            Debug.Log("Letter holds: " + BoulderVar.moves[i][0]);
-            if (i!= BoulderVar.nMoves-1)
-            {
-                SerialManagerScript.SendInfo(",");
-            }
-        }
-        to_send = " ".PadLeft(50- BoulderVar.nMoves-1);
-        SerialManagerScript.SendInfo(to_send);
-        
-
-        // Send NUMBER moves trought bluetooth
-        SerialManagerScript.SendInfo("5");
-        for (int i = 0; i < BoulderVar.nMoves; i++)
+        // Fill char with spaces
+        for(int k=0; k<600; k++)
         {
-            char currentMove1;
-            char currentMove2;
+            char_ary[k] = ' ';
+        }
 
-            if (BoulderVar.moves[i].Length == 3)
-            {
-                currentMove1 = BoulderVar.moves[i][1];
-                currentMove2 = BoulderVar.moves[i][2];
-                SerialManagerScript.SendInfo(currentMove1 + "");
-                SerialManagerScript.SendInfo(currentMove2 + "");
-                Debug.Log("Letter numbers: " + currentMove1 + currentMove2);
-            }
-            else if (BoulderVar.moves[i].Length == 2)
-            {
-                currentMove1 = BoulderVar.moves[i][1];
-                SerialManagerScript.SendInfo(currentMove1 + "");
-                Debug.Log("Letter numbers: " + currentMove1);
-            }
+        // Fill with the name
+        char_ary[0] = (char)((int)(BoulderVar.problemName.Length / 10));
+        char_ary[1] = (char)((int)(BoulderVar.problemName.Length % 10));
+        for (int k=0; k< BoulderVar.problemName.Length; k++)
+        {
+            char_ary[k+2] = BoulderVar.problemName[k];
+        }
 
-            if (i != BoulderVar.nMoves-1){
-                SerialManagerScript.SendInfo(",");
+
+        // Fill with the grade
+        for(int k=0; k< BoulderVar.grade.Length; k++)
+        {
+            char_ary[k + 100] = BoulderVar.grade[k];
+        }
+
+
+        // Fill with the number of moves
+        if (BoulderVar.nMoves <= 9)
+        {
+            char_ary[200] = (char)((int)(BoulderVar.nMoves / 10));
+            char_ary[201] = (char)((int)(BoulderVar.nMoves % 10));
+        }
+
+
+        // Fill with holds letters
+        for(int k=0; k<BoulderVar.nMoves; k++)
+        {
+            char_ary[300+k*2] = BoulderVar.moves[k][0];
+            if (k != BoulderVar.nMoves-1)
+            {
+                char_ary[301 + k * 2] = ',';
             }
         }
-        to_send = " ".PadLeft(50 - BoulderVar.nMoves - 1);
-        SerialManagerScript.SendInfo(to_send);
 
 
-        // Send array of start/middle/top
-        SerialManagerScript.SendInfo("6");
-        for (int i = 0; i < BoulderVar.nMoves; i ++){
-            if (BoulderVar.isStart[i] == true){
-                SerialManagerScript.SendInfo("s");
-                Debug.Log("s");
+        // Fill with holds numbers
+        int i = 0;
+        for(int k=0; k<BoulderVar.nMoves; k++)
+        {
+            if (BoulderVar.moves[k].Length == 3)
+            {
+                char_ary[400+i] = BoulderVar.moves[k][1];
+                char_ary[401+i] = BoulderVar.moves[k][2];
+                if (k != BoulderVar.nMoves-1)
+                {
+                    char_ary[402 + i] = ',';
+                }
+                i += 3;
             }
-            else if (BoulderVar.isEnd[i] == true){
-                SerialManagerScript.SendInfo("e");
-                Debug.Log("e");
-            }
-            else{
-                SerialManagerScript.SendInfo("d");
-                Debug.Log("d");
-            }
-
-            if (i != BoulderVar.nMoves-1){
-                SerialManagerScript.SendInfo(",");
-                Debug.Log(",");
+            else if(BoulderVar.moves[k].Length == 2)
+            {
+                char_ary[400+i] = BoulderVar.moves[k][1];
+                if (k != BoulderVar.nMoves - 1)
+                {
+                    char_ary[401 + i] = ',';
+                }
+                i += 2;
             }
         }
-        to_send = " ".PadLeft(50 - BoulderVar.nMoves - 1);
-        SerialManagerScript.SendInfo(to_send);
-        Debug.Log("Hold type sent");
+
+
+        // Fill with holds types
+        char hold_type;
+        for (int k = 0; k < BoulderVar.nMoves; k++)
+        {
+            if (BoulderVar.isStart[k] == true)
+            {
+                hold_type = 's';
+            }else if (BoulderVar.isEnd[k] == true)
+            {
+                hold_type = 'e';
+            }else
+            {
+                hold_type = 'd';
+            }
+            char_ary[500+k*2] = hold_type;
+            if (k != BoulderVar.nMoves-1)
+            {
+                char_ary[501 + k * 2] = ',';
+            }
+        }
+
+        // Send the string throught bluetooth
+        msg_to_send = new string(char_ary);
+        SerialManagerScript.SendInfo(msg_to_send);
+        Debug.Log("SENT" + BoulderVar.problemName);
 
     }
 
