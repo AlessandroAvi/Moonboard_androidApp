@@ -2,12 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TechTweaking.Bluetooth;
+
 
 public class BluetoothManager : MonoBehaviour
 {
 
+    private BluetoothDevice device;
+    public Text statusText;
+
+
+    public void connect()
+    {
+        //statusText.text = "Status : ...";
+        device.connect();
+    }
+
+
+    void Awake()
+    {
+        BluetoothAdapter.enableBluetooth();//Force Enabling Bluetooth
+
+        device = new BluetoothDevice();
+
+        device.MacAddress = "00:20:12:08:E1:7D";
+    }
+
     public void SendBluetooth()
     {
+
+        //connect();
 
         string msg_to_send;
         char[] char_ary = new char[600];
@@ -103,7 +127,44 @@ public class BluetoothManager : MonoBehaviour
         // Send the string throught bluetooth
         msg_to_send = new string(char_ary);
         SerialManagerScript.SendInfo(msg_to_send);
+        
+        /*
+        if (device != null)
+        {
+            device.send(System.Text.Encoding.ASCII.GetBytes(msg_to_send));
+        }
+        */
         Debug.Log("SENT" + BoulderVar.problemName);
+
+
+
+    }
+
+
+
+
+    public void SendDiscoModeBluetooth()
+    {
+
+        string msg_to_send;
+        char[] char_ary = new char[600];
+
+        // Fill char with spaces
+        for (int k = 0; k < 600; k++)
+        {
+            char_ary[k] = ' ';
+        }
+
+        char_ary[0] = 'D';
+        char_ary[1] = 'I';
+        char_ary[2] = 'S';
+        char_ary[3] = 'C';
+        char_ary[4] = 'O';
+
+        msg_to_send = new string(char_ary);
+
+        SerialManagerScript.SendInfo(msg_to_send);
+        Debug.Log("DISCO MODE SENT");
 
     }
 

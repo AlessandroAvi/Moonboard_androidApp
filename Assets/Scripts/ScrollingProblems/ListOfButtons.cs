@@ -31,7 +31,8 @@ public class ListOfButtons : MonoBehaviour
         //https://stackoverflow.com/questions/35926252/android-read-an-external-file-not-created-by-app
 
         // ----- UNITY GAME 
-        string path = Application.dataPath + "/Scripts/ScrollingProblems/filtered_problems.json";
+        //string path = Application.dataPath + "/Scripts/ScrollingProblems/filtered_problems.json";
+        string path = Application.dataPath + "/Scripts/ScrollingProblems/filtered_problems_1.json";
         // ----- ANDROID BUILD 
         //string path = Application.persistentDataPath + "/filtered_problems.json";
 
@@ -54,7 +55,7 @@ public class ListOfButtons : MonoBehaviour
                 g = Instantiate(buttonTemplate, transform);
                 g.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(list[(i+1).ToString()]["Name"]);
                 g.transform.GetChild(1).GetComponent<TextMeshProUGUI>().SetText(list[(i+1).ToString()]["Grade"]);
-                g.transform.GetChild(2).GetComponent<TextMeshProUGUI>().SetText(list[(i+1).ToString()]["Rating"].ToString());
+                //g.transform.GetChild(2).GetComponent<TextMeshProUGUI>().SetText(list[(i+1).ToString()]["Rating"].ToString());
                 //g.transform.GetChild(3).GetComponent<Text>().text =list[(i+1).ToString()]["Name"];
                 g.transform.GetChild(4).gameObject.SetActive(list[(i+1).ToString()]["Sended"]);
 
@@ -82,7 +83,7 @@ public class ListOfButtons : MonoBehaviour
         if (BoulderVar.filterSended && !sampleProblem["Sended"]) return false; 
 
         // check rating
-        if ((int)sampleProblem["Rating"] < (int)BoulderVar.minRating) return false;
+        //if ((int)sampleProblem["Rating"] < (int)BoulderVar.minRating) return false;
 
         // check benchmark
         if (BoulderVar.benchmark)
